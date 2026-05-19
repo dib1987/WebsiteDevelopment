@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sundrop Creamery — Small batches, big joy.</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Nunito', sans-serif; color: #1C1917; overflow-x: hidden; background: #fff; }
+
+    :focus-visible { outline: 3px solid #F472B6; outline-offset: 2px; border-radius: 4px; }
+
+    @keyframes float-a { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-14px) rotate(4deg); } }
+    @keyframes float-b { 0%,100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-10px) rotate(2deg); } }
+    @keyframes float-c { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-18px); } }
+    @keyframes fade-up  { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+    .fa { animation: float-a 4s ease-in-out infinite; }
+    .fb { animation: float-b 5s ease-in-out infinite 0.6s; }
+    .fc { animation: float-c 3.5s ease-in-out infinite 1.2s; }
+
+    /* ── Buttons ── */
+    .btn-pink {
+      background: #F472B6; color: #fff; border: none;
+      padding: 13px 30px; border-radius: 50px;
+      font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 16px;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+      box-shadow: 0 4px 18px rgba(244,114,182,.32);
+      transition: transform .2s, box-shadow .2s, background .2s;
+    }
+    .btn-pink:hover  { background: #EC4899; transform: translateY(-3px); box-shadow: 0 8px 28px rgba(244,114,182,.46); }
+    .btn-pink:active { transform: translateY(-1px); }
+
+    .btn-outline {
+      background: transparent; color: #F472B6; border: 2.5px solid #F472B6;
+      padding: 11px 28px; border-radius: 50px;
+      font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 16px;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+      transition: background .2s, transform .2s;
+    }
+    .btn-outline:hover { background: #FFF0F8; transform: translateY(-3px); }
+
+    .btn-dark {
+      background: #1C1917; color: #fff; border: none;
+      padding: 13px 30px; border-radius: 50px;
+      font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 16px;
+      cursor: pointer; transition: background .2s, transform .2s;
+    }
+    .btn-dark:hover { background: #292524; transform: translateY(-2px); }
+
+    /* ── Flavor card ── */
+    .flavor-card {
+      border-radius: 24px; padding: 24px;
+      transition: transform .25s, box-shadow .25s;
+    }
+    .flavor-card:hover { transform: translateY(-8px); box-shadow: 0 22px 52px rgba(0,0,0,.11) !important; }
+
+    /* ── Add-to-cart button ── */
+    .add-btn {
+      background: #F472B6; color: #fff; border: none;
+      border-radius: 50px; padding: 10px 20px;
+      font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14px;
+      cursor: pointer; white-space: nowrap; transition: all .22s;
+    }
+    .add-btn:hover  { background: #EC4899; transform: scale(1.06); }
+    .add-btn.added  { background: #34D399; color: #fff; }
+
+    /* ── Nav links ── */
+    .nav-btn {
+      background: none; border: none; cursor: pointer;
+      font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 15px;
+      color: #44403C; padding: 4px 0;
+      position: relative; transition: color .15s;
+    }
+    .nav-btn::after {
+      content: ''; position: absolute; bottom: 0; left: 0;
+      width: 0; height: 2px; background: #F472B6;
+      transition: width .2s ease;
+    }
+    .nav-btn:hover { color: #F472B6; }
+    .nav-btn:hover::after { width: 100%; }
+
+    /* ── Form input ── */
+    .f-input {
+      width: 100%; padding: 12px 16px; border-radius: 12px;
+      border: 2px solid #F9E8F4; font-family: 'Nunito', sans-serif;
+      font-size: 15px; font-weight: 600; color: #1C1917; outline: none;
+      transition: border-color .2s;
+    }
+    .f-input:focus  { border-color: #F472B6; }
+    .f-input::placeholder { color: #A8A29E; }
+
+    /* ── Testimonial card ── */
+    .t-card {
+      background: #fff; border-radius: 24px; padding: 28px;
+      box-shadow: 0 4px 20px rgba(244,114,182,.09);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .t-card:hover { transform: translateY(-5px); box-shadow: 0 14px 36px rgba(244,114,182,.14); }
+
+    /* ── Mobile nav overlay ── */
+    .mob-nav {
+      display: none; position: fixed; inset: 0;
+      background: #fff; z-index: 98;
+      flex-direction: column; align-items: center; justify-content: center; gap: 32px;
+    }
+    .mob-nav.open { display: flex; animation: fade-up .25s ease; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #FFF0F8; }
+    ::-webkit-scrollbar-thumb { background: #F9A8D4; border-radius: 3px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .desk-nav { display: none !important; }
+      .mob-btn  { display: flex !important; }
+      .hero-vis { display: none !important; }
+      .order-now-btn { display: none !important; }
+    }
+    @media (min-width: 769px) {
+      .mob-btn { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+  const { useState, useEffect } = React;
+
+  /* ═══════════════════════════════════════════════════════
+     SVG ICON PRIMITIVES
+  ═══════════════════════════════════════════════════════ */
+  const SvgIcon = ({ children, size = 24, color = 'currentColor', fill = 'none', sw = 2 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24"
+         fill={fill} stroke={color} strokeWidth={sw}
+         strokeLinecap="round" strokeLinejoin="round">
+      {children}
+    </svg>
+  );
+
+  const CartIcon  = ({s,c}) => <SvgIcon size={s||24} color={c||'currentColor'}><circle cx="9"  cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></SvgIcon>;
+  const XIcon     = ({s,c}) => <SvgIcon size={s||24} color={c||'currentColor'} sw={2.5}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></SvgIcon>;
+  const PlusIcon  = ({s,c}) => <SvgIcon size={s||16} color={c||'currentColor'} sw={2.5}><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></SvgIcon>;
+  const MinusIcon = ({s,c}) => <SvgIcon size={s||16} color={c||'currentColor'} sw={2.5}><line x1="5" y1="12" x2="19" y2="12"/></SvgIcon>;
+  const PinIcon   = ({s,c}) => <SvgIcon size={s||16} color={c||'currentColor'}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></SvgIcon>;
+  const PhoneIcon = ({s,c}) => <SvgIcon size={s||16} color={c||'currentColor'}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></SvgIcon>;
+  const MailIcon  = ({s,c}) => <SvgIcon size={s||16} color={c||'currentColor'}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></SvgIcon>;
+  const StarIcon  = ({s,c,f}) => <SvgIcon size={s||16} color={c||'#F59E0B'} fill={f?'#FDE68A':'none'}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></SvgIcon>;
+  const TruckIcon = ({s,c}) => <SvgIcon size={s||16} color={c||'currentColor'}><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></SvgIcon>;
+  const StoreIcon = ({s,c}) => <SvgIcon size={s||16} color={c||'currentColor'}><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></SvgIcon>;
+  const MenuIcon  = ({s,c}) => <SvgIcon size={s||24} color={c||'currentColor'} sw={2.5}><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="17" x2="21" y2="17"/></SvgIcon>;
+
+  /* ═══════════════════════════════════════════════════════
+     DATA
+  ═══════════════════════════════════════════════════════ */
+  const FLAVORS = [
+    { id:1, name:'Strawberry Confetti',     emoji:'🍓', price:4.50, pint:12, tub:22, tags:['gluten-free'],              desc:'Fresh strawberries swirled with rainbow sprinkles and vanilla cream',          bg:'#FFF0F8', accent:'#DB2777' },
+    { id:2, name:'Midnight Cookies & Cream',emoji:'🍫', price:4.50, pint:12, tub:22, tags:[],                           desc:'Dark chocolate base with crushed Oreos and silky vanilla ribbons',             bg:'#F5F3FF', accent:'#7C3AED' },
+    { id:3, name:'Mango Tango Sorbet',       emoji:'🥭', price:4.00, pint:11, tub:20, tags:['vegan','dairy-free','gluten-free'], desc:'Zesty mango sorbet with a bold chili-lime finish',                     bg:'#FFF7ED', accent:'#EA580C' },
+    { id:4, name:'Brown Butter Pecan',       emoji:'🥜', price:5.00, pint:14, tub:26, tags:['contains nuts'],            desc:'Nutty brown butter ice cream with caramelized pecan brittle pieces',          bg:'#FFFBEB', accent:'#B45309' },
+    { id:5, name:'Birthday Cake Blast',      emoji:'🎂', price:4.50, pint:12, tub:22, tags:[],                           desc:'Funfetti cake batter with frosting swirls and rainbow sprinkles',             bg:'#EFF6FF', accent:'#2563EB' },
+    { id:6, name:'Mint Chocolate Chip',      emoji:'🌿', price:4.50, pint:12, tub:22, tags:['gluten-free'],              desc:'Cool peppermint ice cream studded with rich dark chocolate shards',           bg:'#ECFDF5', accent:'#059669' },
+    { id:7, name:'Salted Caramel Cloud',     emoji:'🧂', price:5.00, pint:14, tub:26, tags:['gluten-free'],              desc:'Silky sea salt caramel with hand-pulled buttery toffee pieces',               bg:'#FEFCE8', accent:'#CA8A04' },
+    { id:8, name:'Lavender Honey Dream',     emoji:'🌸', price:5.00, pint:14, tub:26, tags:[],                           desc:'Floral lavender with local wildflower honey and graham cracker crumble',      bg:'#FAF5FF', accent:'#9333EA' },
+  ];
+
+  const TAG = {
+    'gluten-free':   { bg:'#DCFCE7', color:'#166534', label:'GF' },
+    'vegan':         { bg:'#D1FAE5', color:'#065F46', label:'Vegan' },
+    'dairy-free':    { bg:'#DBEAFE', color:'#1E40AF', label:'DF' },
+    'contains nuts': { bg:'#FEF3C7', color:'#92400E', label:'🥜 Nuts' },
+  };
+
+  const TESTIMONIALS = [
+    { name:'Sarah M.',  avatar:'😊', rating:5, text:'The Lavender Honey Dream changed my life. I make weekly trips to Brooklyn just for a scoop — and I live in Manhattan.' },
+    { name:'James T.',  avatar:'😄', rating:5, text:"Best birthday cake ice cream I've ever had. My kids insist on Sundrop for every birthday now. Truly non-negotiable." },
+    { name:'Priya K.',  avatar:'🥰', rating:5, text:'As someone dairy-free, I was blown away by the Mango Tango Sorbet. Finally a shop that doesn\'t treat vegan options as an afterthought!' },
+    { name:'Carlos R.', avatar:'😎', rating:5, text:'The Salted Caramel Cloud is pure perfection. Sweet, salty, creamy. I\'ve converted my entire office. They thank me weekly.' },
+  ];
+
+  const SOCIALS = [
+    { label:'Instagram', path:'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z' },
+    { label:'Facebook', path:'M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z' },
+    { label:'TikTok',   path:'M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z' },
+  ];
+
+  const NAV_LINKS = [
+    { label:'Flavors',   id:'flavors'   },
+    { label:'Shop',      id:'shop'      },
+    { label:'Our Story', id:'our-story' },
+    { label:'Locations', id:'locations' },
+    { label:'Contact',   id:'contact'   },
+  ];
+
+  /* ═══════════════════════════════════════════════════════
+     WAVE DIVIDER
+  ═══════════════════════════════════════════════════════ */
+  const Wave = ({ topColor, bottomColor, flip }) => (
+    <div style={{ background: topColor, lineHeight: 0, display: 'block' }}>
+      <svg viewBox="0 0 1440 64" preserveAspectRatio="none"
+           style={{ display:'block', width:'100%', height:64, transform: flip ? 'scaleY(-1)' : 'none' }}>
+        <path d="M0,32 C360,64 1080,0 1440,32 L1440,64 L0,64 Z" fill={bottomColor}/>
+      </svg>
+    </div>
+  );
+
+  /* ═══════════════════════════════════════════════════════
+     MAIN COMPONENT
+  ═══════════════════════════════════════════════════════ */
+  function SundropCreamery() {
+    const [cart,          setCart]          = useState([]);
+    const [cartOpen,      setCartOpen]      = useState(false);
+    const [checkoutOpen,  setCheckoutOpen]  = useState(false);
+    const [fulfillment,   setFulfillment]   = useState('pickup');
+    const [orderPlaced,   setOrderPlaced]   = useState(false);
+    const [orderNum,      setOrderNum]      = useState('');
+    const [mobMenuOpen,   setMobMenuOpen]   = useState(false);
+    const [scrolled,      setScrolled]      = useState(false);
+    const [addedId,       setAddedId]       = useState(null);
+    const [nlEmail,       setNlEmail]       = useState('');
+    const [nlError,       setNlError]       = useState('');
+    const [nlDone,        setNlDone]        = useState(false);
+    const [form,          setForm]          = useState({ name:'', address:'', city:'', zip:'', phone:'' });
+
+    /* scroll detection */
+    useEffect(() => {
+      const fn = () => setScrolled(window.scrollY > 20);
+      window.addEventListener('scroll', fn);
+      return () => window.removeEventListener('scroll', fn);
+    }, []);
+
+    /* body scroll lock */
+    useEffect(() => {
+      document.body.style.overflow = (cartOpen || checkoutOpen || mobMenuOpen) ? 'hidden' : '';
+      return () => { document.body.style.overflow = ''; };
+    }, [cartOpen, checkoutOpen, mobMenuOpen]);
+
+    /* derived cart values */
+    const cartCount    = cart.reduce((s,i) => s + i.qty, 0);
+    const cartSub      = cart.reduce((s,i) => s + i.price * i.qty, 0);
+    const deliveryFee  = fulfillment === 'delivery' && cartSub < 35 ? 3.99 : 0;
+    const cartTotal    = cartSub + deliveryFee;
+
+    /* cart actions */
+    const addToCart = (flavor) => {
+      setCart(prev => {
+        const ex = prev.find(i => i.id === flavor.id);
+        return ex
+          ? prev.map(i => i.id === flavor.id ? { ...i, qty: i.qty + 1 } : i)
+          : [...prev, { ...flavor, qty: 1 }];
+      });
+      setAddedId(flavor.id);
+      setTimeout(() => setAddedId(null), 1100);
+    };
+
+    const updateQty = (id, d) =>
+      setCart(prev =>
+        prev.map(i => i.id === id ? { ...i, qty: Math.max(0, i.qty + d) } : i)
+            .filter(i => i.qty > 0));
+
+    const removeItem = (id) => setCart(prev => prev.filter(i => i.id !== id));
+
+    /* smooth scroll helper */
+    const scrollTo = (id) => {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      setMobMenuOpen(false);
+    };
+
+    /* checkout */
+    const placeOrder = (e) => {
+      e.preventDefault();
+      setOrderNum(`SD-${Math.floor(Math.random() * 9000) + 1000}`);
+      setOrderPlaced(true);
+    };
+
+    const closeCheckout = () => {
+      setCheckoutOpen(false);
+      if (orderPlaced) {
+        setCart([]);
+        setOrderPlaced(false);
+        setOrderNum('');
+        setForm({ name:'', address:'', city:'', zip:'', phone:'' });
+      }
+    };
+
+    /* newsletter */
+    const submitNl = (e) => {
+      e.preventDefault();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nlEmail)) {
+        setNlError('Please enter a valid email address.');
+        return;
+      }
+      setNlError('');
+      setNlDone(true);
+    };
+
+    /* shared styles */
+    const C = { pink:'#F472B6', mint:'#86EFAC', lemon:'#FDE68A', dark:'#1C1917', muted:'#78716C', blush:'#FFF0F8' };
+
+    /* ─────────────────────────────── RENDER ─────────────────────────────── */
+    return (
+      <div style={{ fontFamily:"'Nunito',sans-serif", color:C.dark }}>
+
+        {/* ══ MOBILE NAV OVERLAY ══════════════════════════════════════════════ */}
+        <div className={`mob-nav ${mobMenuOpen ? 'open' : ''}`}
+             role="dialog" aria-modal="true" aria-label="Navigation menu">
+          <button onClick={() => setMobMenuOpen(false)} aria-label="Close menu"
+                  style={{ position:'absolute', top:24, right:24, background:'none', border:'none', cursor:'pointer' }}>
+            <XIcon s={28} c={C.dark} />
+          </button>
+          <span style={{ fontFamily:'Pacifico,cursive', fontSize:34, color:C.pink }}>🍦 Sundrop</span>
+          {NAV_LINKS.map(({ label, id }) => (
+            <button key={id} onClick={() => scrollTo(id)}
+                    style={{ background:'none', border:'none', fontFamily:"'Nunito',sans-serif", fontWeight:800, fontSize:26, color:C.dark, cursor:'pointer' }}>
+              {label}
+            </button>
+          ))}
+          <button className="btn-pink" onClick={() => { scrollTo('shop'); setMobMenuOpen(false); }}>Order Now 🛒</button>
+        </div>
+
+        {/* ══ STICKY HEADER ════════════════════════════════════════════════════ */}
+        <header style={{
+          position:'fixed', top:0, left:0, right:0, zIndex:90,
+          background: scrolled ? 'rgba(255,255,255,.96)' : 'transparent',
+          backdropFilter: scrolled ? 'blur(14px)' : 'none',
+          boxShadow: scrolled ? '0 2px 24px rgba(244,114,182,.10)' : 'none',
+          transition:'all .3s ease',
+          padding: scrolled ? '10px 24px' : '18px 24px',
+        }}>
+          <div style={{ maxWidth:1200, margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'space-between', gap:16 }}>
+
+            {/* Logo */}
+            <button onClick={() => scrollTo('hero')} aria-label="Sundrop Creamery home"
+                    style={{ background:'none', border:'none', cursor:'pointer', display:'flex', alignItems:'center', gap:8, flexShrink:0 }}>
+              <span style={{ fontSize:26 }}>🍦</span>
+              <span style={{ fontFamily:'Pacifico,cursive', fontSize:22, color:C.pink, lineHeight:1 }}>Sundrop</span>
+            </button>
+
+            {/* Desktop nav */}
+            <nav className="desk-nav" aria-label="Main navigation" style={{ display:'flex', gap:28 }}>
+              {NAV_LINKS.map(({ label, id }) => (
+                <button key={id} className="nav-btn" onClick={() => scrollTo(id)}>{label}</button>
+              ))}
+            </nav>
+
+            {/* Actions */}
+            <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+              {/* Cart */}
+              <button onClick={() => setCartOpen(true)} aria-label={`Open cart — ${cartCount} item${cartCount !== 1 ? 's' : ''}`}
+                      style={{ background:'none', border:'none', cursor:'pointer', position:'relative', padding:6, borderRadius:12 }}>
+                <CartIcon s={22} c={C.dark} />
+                {cartCount > 0 && (
+                  <span aria-hidden="true" style={{
+                    position:'absolute', top:-3, right:-3,
+                    background:C.pink, color:'#fff', borderRadius:'50%',
+                    width:20, height:20, display:'flex', alignItems:'center', justifyContent:'center',
+                    fontSize:11, fontWeight:900, fontFamily:"'Nunito',sans-serif",
+                  }}>{cartCount > 9 ? '9+' : cartCount}</span>
+                )}
+              </button>
+
+              {/* Order Now — desktop */}
+              <button className="btn-pink order-now-btn" onClick={() => scrollTo('shop')}
+                      style={{ fontSize:14, padding:'10px 20px' }}>
+                Order Now
+              </button>
+
+              {/* Hamburger — mobile */}
+              <button className="mob-btn" onClick={() => setMobMenuOpen(true)} aria-label="Open menu"
+                      style={{ display:'none', background:'none', border:'none', cursor:'pointer', padding:4 }}>
+                <MenuIcon s={24} c={C.dark} />
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <main>
+          {/* ══ HERO ═════════════════════════════════════════════════════════ */}
+          <section id="hero" style={{
+            minHeight:'100vh',
+            background:'linear-gradient(135deg,#FFF0F8 0%,#FDE8FF 45%,#E8EFFF 100%)',
+            display:'flex', alignItems:'center',
+            position:'relative', overflow:'hidden', paddingTop:80,
+          }}>
+            {/* Decorative blobs */}
+            <svg aria-hidden="true" style={{ position:'absolute',top:-120,right:-120,opacity:.15,pointerEvents:'none' }} width="520" height="520" viewBox="0 0 520 520">
+              <path d="M260,65 C355,20 470,105 485,260 C500,400 410,470 275,480 C140,490 40,400 30,265 C20,130 165,110 260,65Z" fill="#F472B6"/>
+            </svg>
+            <svg aria-hidden="true" style={{ position:'absolute',bottom:-80,left:-110,opacity:.12,pointerEvents:'none' }} width="450" height="450" viewBox="0 0 450 450">
+              <path d="M225,55 C310,15 405,95 415,225 C425,350 340,415 215,420 C90,425 20,345 28,225 C36,105 145,95 225,55Z" fill="#86EFAC"/>
+            </svg>
+            <svg aria-hidden="true" style={{ position:'absolute',top:'35%',left:'28%',opacity:.09,pointerEvents:'none' }} width="220" height="220" viewBox="0 0 220 220">
+              <circle cx="110" cy="110" r="110" fill="#FDE68A"/>
+            </svg>
+
+            {/* Floating decorative emojis */}
+            {[
+              { e:'🍦', top:'10%', left:'4%',  size:54, cls:'fa' },
+              { e:'🍨', top:'62%', left:'91%', size:46, cls:'fb' },
+              { e:'✨', top:'22%', left:'90%', size:30, cls:'fc' },
+              { e:'🍓', top:'80%', left:'5%',  size:34, cls:'fb' },
+              { e:'🌈', top:'7%',  left:'55%', size:28, cls:'fa' },
+            ].map(({ e,top,left,size,cls },i) => (
+              <span key={i} className={cls} aria-hidden="true"
+                    style={{ position:'absolute',top,left,fontSize:size,opacity:.45,userSelect:'none',pointerEvents:'none' }}>
+                {e}
+              </span>
+            ))}
+
+            <div style={{ maxWidth:1200, margin:'0 auto', padding:'0 24px 64px', display:'flex', alignItems:'center', justifyContent:'space-between', width:'100%', flexWrap:'wrap', gap:40 }}>
+
+              {/* Copy */}
+              <div style={{ flex:'1 1 320px', maxWidth:580 }}>
+                <div style={{ display:'inline-flex', alignItems:'center', gap:8, background:C.lemon, borderRadius:50, padding:'6px 16px', marginBottom:24, fontWeight:800, fontSize:13, color:'#78350F' }}>
+                  🌟 Brooklyn's Beloved Scoop Shop
+                </div>
+                <h1 style={{ fontFamily:'Pacifico,cursive', fontSize:'clamp(38px,8vw,80px)', color:C.pink, lineHeight:1.1, marginBottom:20 }}>
+                  Small batches,<br/>big joy.
+                </h1>
+                <p style={{ fontSize:'clamp(16px,2vw,19px)', color:C.muted, lineHeight:1.78, marginBottom:36, fontWeight:600, maxWidth:480 }}>
+                  Handcrafted ice cream made with real ingredients, wild imagination, and a whole lot of love. Pickup or local delivery in Brooklyn.
+                </p>
+                <div style={{ display:'flex', gap:14, flexWrap:'wrap' }}>
+                  <button className="btn-pink" style={{ fontSize:17, padding:'14px 30px' }} onClick={() => scrollTo('shop')}>Shop Now 🛒</button>
+                  <button className="btn-outline" style={{ fontSize:17, padding:'12px 28px' }} onClick={() => scrollTo('flavors')}>View Flavors 🍦</button>
+                </div>
+                <div style={{ display:'flex', gap:36, marginTop:44, flexWrap:'wrap' }}>
+                  {[['8','Flavors'],['⭐ 4.9','Rating'],['2,000+','Happy scoops']].map(([v,l]) => (
+                    <div key={l}>
+                      <div style={{ fontFamily:'Pacifico,cursive', fontSize:24, color:C.pink }}>{v}</div>
+                      <div style={{ fontSize:13, color:C.muted, fontWeight:700 }}>{l}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Visual */}
+              <div className="hero-vis" aria-hidden="true" style={{ flex:'0 0 auto', width:380, height:420, position:'relative' }}>
+                <div style={{ position:'absolute', top:50, left:40, width:300, height:300, background:'linear-gradient(145deg,#F9A8D4,#FDE68A)', borderRadius:'60% 40% 55% 45% / 55% 45% 60% 40%', boxShadow:'0 24px 72px rgba(244,114,182,.26)' }}/>
+                <div style={{ position:'absolute', top:8, left:38 }}>
+                  <span style={{ fontSize:200, lineHeight:1, filter:'drop-shadow(0 14px 30px rgba(0,0,0,.12))' }}>🍦</span>
+                </div>
+                {/* Pop badge 1 */}
+                <div className="fb" style={{ position:'absolute', bottom:24, right:0, background:'#fff', borderRadius:20, padding:'12px 18px', boxShadow:'0 8px 30px rgba(0,0,0,.10)', display:'flex', alignItems:'center', gap:10 }}>
+                  <span style={{ fontSize:28 }}>🍓</span>
+                  <div>
+                    <div style={{ fontWeight:800, fontSize:13, color:C.dark }}>Strawberry Confetti</div>
+                    <div style={{ fontSize:11, color:'#34D399', fontWeight:800 }}>Most popular ✨</div>
+                  </div>
+                </div>
+                {/* Pop badge 2 */}
+                <div className="fc" style={{ position:'absolute', top:42, right:-14, background:C.lemon, borderRadius:18, padding:'10px 16px', boxShadow:'0 6px 22px rgba(253,230,138,.4)' }}>
+                  <div style={{ fontWeight:800, fontSize:13, color:'#78350F' }}>🔥 New!</div>
+                  <div style={{ fontSize:11, color:'#92400E', fontWeight:700 }}>Lavender Honey Dream</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Scroll hint */}
+            <div className="fc" aria-hidden="true" style={{ position:'absolute', bottom:22, left:'50%', transform:'translateX(-50%)', display:'flex', flexDirection:'column', alignItems:'center', gap:4, opacity:.4 }}>
+              <span style={{ fontSize:11, fontWeight:700, color:C.muted }}>scroll</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.muted} strokeWidth="2.5" strokeLinecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+          </section>
+
+          {/* ══ FLAVORS ══════════════════════════════════════════════════════ */}
+          <Wave topColor="transparent" bottomColor="#FFFBFF"/>
+          <section id="flavors" style={{ background:'#FFFBFF', paddingBottom:80 }}>
+            <div style={{ maxWidth:1200, margin:'0 auto', padding:'0 24px' }}>
+              <div style={{ textAlign:'center', marginBottom:56 }}>
+                <div style={{ display:'inline-block', background:'#FFF0F8', borderRadius:50, padding:'6px 18px', marginBottom:16, fontWeight:800, fontSize:13, color:'#BE185D' }}>🍦 The Menu</div>
+                <h2 style={{ fontFamily:'Pacifico,cursive', fontSize:'clamp(28px,5vw,52px)', color:C.pink, marginBottom:12 }}>Our Flavors</h2>
+                <p style={{ fontSize:17, color:C.muted, fontWeight:600 }}>Eight reasons to treat yourself today</p>
+              </div>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(260px,1fr))', gap:24 }}>
+                {FLAVORS.map(f => (
+                  <article key={f.id} className="flavor-card" style={{ background:f.bg, boxShadow:'0 4px 18px rgba(0,0,0,.05)' }}>
+                    <div role="img" aria-label={f.name} style={{ textAlign:'center', fontSize:64, marginBottom:14, lineHeight:1.1 }}>{f.emoji}</div>
+                    {f.tags.length > 0 && (
+                      <div style={{ display:'flex', gap:6, flexWrap:'wrap', marginBottom:10 }}>
+                        {f.tags.map(t => {
+                          const s = TAG[t] || { bg:'#F3F4F6', color:'#374151', label:t };
+                          return <span key={t} style={{ background:s.bg, color:s.color, borderRadius:50, padding:'3px 10px', fontSize:11, fontWeight:800 }}>{s.label}</span>;
+                        })}
+                      </div>
+                    )}
+                    <h3 style={{ fontWeight:800, fontSize:18, marginBottom:8, color:C.dark }}>{f.name}</h3>
+                    <p style={{ fontSize:13, color:C.muted, lineHeight:1.65, marginBottom:18, fontWeight:600 }}>{f.desc}</p>
+                    <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:10 }}>
+                      <div>
+                        <div style={{ fontWeight:900, fontSize:20, color:f.accent }}>${f.price.toFixed(2)} <span style={{ fontSize:13, color:C.muted, fontWeight:600 }}>/ scoop</span></div>
+                        <div style={{ fontSize:12, color:'#A8A29E', fontWeight:600 }}>Pint ${f.pint} · Tub ${f.tub}</div>
+                      </div>
+                      <button className={`add-btn${addedId === f.id ? ' added' : ''}`}
+                              onClick={() => addToCart(f)}
+                              aria-label={`Add ${f.name} to cart`}>
+                        {addedId === f.id ? '✓ Added!' : '+ Add'}
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ══ SHOP / CTA ═══════════════════════════════════════════════════ */}
+          <Wave topColor="#FFFBFF" bottomColor="transparent"/>
+          <section id="shop" style={{ background:'linear-gradient(135deg,#F472B6 0%,#C084FC 100%)', padding:'72px 24px', textAlign:'center' }}>
+            <div style={{ maxWidth:640, margin:'0 auto' }}>
+              <div style={{ fontSize:52, marginBottom:16 }}>🛒</div>
+              <h2 style={{ fontFamily:'Pacifico,cursive', fontSize:'clamp(24px,4vw,44px)', color:'#fff', marginBottom:14, textShadow:'0 2px 12px rgba(0,0,0,.12)' }}>
+                Ready to order?
+              </h2>
+              <p style={{ fontSize:17, color:'rgba(255,255,255,.88)', fontWeight:600, lineHeight:1.72, marginBottom:36 }}>
+                Add scoops to your cart using the flavor cards above, then checkout for in-store pickup or local Brooklyn delivery.
+              </p>
+              <div style={{ display:'flex', gap:14, justifyContent:'center', flexWrap:'wrap' }}>
+                <button style={{ background:'#fff', color:C.pink, border:'none', borderRadius:50, padding:'14px 28px', fontFamily:"'Nunito',sans-serif", fontWeight:800, fontSize:16, cursor:'pointer', transition:'transform .2s', boxShadow:'0 4px 22px rgba(255,255,255,.35)' }}
+                        onClick={() => scrollTo('flavors')}
+                        onMouseEnter={e=>e.currentTarget.style.transform='translateY(-2px)'}
+                        onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
+                  Browse Flavors 🍦
+                </button>
+                <button style={{ background:'rgba(255,255,255,.15)', color:'#fff', border:'2px solid rgba(255,255,255,.65)', borderRadius:50, padding:'12px 26px', fontFamily:"'Nunito',sans-serif", fontWeight:800, fontSize:16, cursor:'pointer', transition:'transform .2s', backdropFilter:'blur(8px)' }}
+                        onClick={() => cartCount > 0 ? setCartOpen(true) : scrollTo('flavors')}
+                        onMouseEnter={e=>e.currentTarget.style.transform='translateY(-2px)'}
+                        onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
+                  {cartCount > 0 ? `View Cart (${cartCount}) 🛒` : 'Start Your Order 🛒'}
+                </button>
+              </div>
+              <p style={{ color:'rgba(255,255,255,.6)', fontSize:13, marginTop:24, fontWeight:600 }}>
+                📍 Delivering within 5 miles · Free delivery on orders over $35
+              </p>
+            </div>
+          </section>
+
+          {/* ══ OUR STORY ════════════════════════════════════════════════════ */}
+          <section id="our-story" style={{ background:'#FFF0F8', padding:'80px 24px' }}>
+            <div style={{ maxWidth:960, margin:'0 auto' }}>
+              <div style={{ textAlign:'center', marginBottom:56 }}>
+                <div style={{ display:'inline-block', background:'#F9A8D4', borderRadius:50, padding:'6px 18px', marginBottom:16, fontWeight:800, fontSize:13, color:'#831843' }}>💛 Who We Are</div>
+                <h2 style={{ fontFamily:'Pacifico,cursive', fontSize:'clamp(28px,5vw,52px)', color:C.pink, marginBottom:12 }}>Our Story</h2>
+              </div>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))', gap:52, alignItems:'center' }}>
+                <div style={{ textAlign:'center' }}>
+                  <div style={{ width:176, height:176, background:'linear-gradient(145deg,#F9A8D4,#FDE68A)', borderRadius:'50%', margin:'0 auto 20px', display:'flex', alignItems:'center', justifyContent:'center', fontSize:84, boxShadow:'0 18px 50px rgba(244,114,182,.22)' }}
+                       role="img" aria-label="Maya Sundrop, founder">
+                    👩‍🍳
+                  </div>
+                  <h3 style={{ fontWeight:800, fontSize:20, color:C.dark, marginBottom:4 }}>Maya Sundrop</h3>
+                  <p style={{ color:C.muted, fontWeight:700, fontSize:14 }}>Founder & Chief Scoop Officer</p>
+                  <div style={{ display:'flex', justifyContent:'center', gap:3, marginTop:10 }}>
+                    {[...Array(5)].map((_,i) => <StarIcon key={i} s={16} f={true}/>)}
+                  </div>
+                </div>
+                <div>
+                  <p style={{ fontSize:16, color:'#44403C', lineHeight:1.88, marginBottom:20, fontWeight:600 }}>
+                    Sundrop Creamery started in 2019 as a tiny operation out of Maya's apartment kitchen in Bed-Stuy. She was convinced there had to be better ice cream out there — the kind made with actual strawberries, real brown butter, and lavender from her neighbor's rooftop garden.
+                  </p>
+                  <p style={{ fontSize:16, color:'#44403C', lineHeight:1.88, marginBottom:24, fontWeight:600 }}>
+                    Word spread faster than a scoop on a hot July sidewalk. By 2021, Sundrop had its first storefront on Blossom Lane. Today, every batch is still handmade in small quantities, with ingredients sourced from within 100 miles whenever possible.
+                  </p>
+                  <blockquote style={{ background:'#fff', borderRadius:20, padding:'20px 24px', borderLeft:'4px solid #F472B6', boxShadow:'0 4px 16px rgba(244,114,182,.08)' }}>
+                    <p style={{ fontSize:15, color:C.muted, fontStyle:'italic', lineHeight:1.78, fontWeight:600, margin:0 }}>
+                      "I just wanted ice cream that tasted like someone actually cared. Turns out, a lot of people were waiting for exactly that."
+                    </p>
+                    <footer style={{ fontSize:14, color:C.pink, fontWeight:800, marginTop:10 }}>— Maya Sundrop</footer>
+                  </blockquote>
+                </div>
+              </div>
+
+              {/* Values grid */}
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))', gap:20, marginTop:56 }}>
+                {[
+                  { e:'🥛', t:'Local Dairy',    s:'Cream from Hudson Valley farms within 80 miles' },
+                  { e:'🌿', t:'Real Ingredients', s:'No artificial colors, no fake flavors — ever' },
+                  { e:'♻️', t:'Eco Packaging',   s:'100% compostable cups and containers' },
+                  { e:'🤝', t:'Community',       s:'Sourcing from Brooklyn suppliers wherever possible' },
+                ].map(({ e,t,s }) => (
+                  <div key={t} style={{ background:'#fff', borderRadius:20, padding:'24px 20px', textAlign:'center', boxShadow:'0 4px 16px rgba(244,114,182,.07)', transition:'transform .2s' }}
+                       onMouseEnter={ev=>ev.currentTarget.style.transform='translateY(-4px)'}
+                       onMouseLeave={ev=>ev.currentTarget.style.transform='translateY(0)'}>
+                    <div style={{ fontSize:36, marginBottom:12 }}>{e}</div>
+                    <h4 style={{ fontWeight:800, fontSize:15, marginBottom:6, color:C.dark }}>{t}</h4>
+                    <p style={{ fontSize:13, color:C.muted, lineHeight:1.6, fontWeight:600, margin:0 }}>{s}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ══ LOCATIONS ════════════════════════════════════════════════════ */}
+          <Wave topColor="#FFF0F8" bottomColor="#FFFBFF"/>
+          <section id="locations" style={{ background:'#FFFBFF', padding:'80px 24px' }}>
+            <div style={{ maxWidth:1100, margin:'0 auto' }}>
+              <div style={{ textAlign:'center', marginBottom:56 }}>
+                <div style={{ display:'inline-block', background:'#ECFDF5', borderRadius:50, padding:'6px 18px', marginBottom:16, fontWeight:800, fontSize:13, color:'#065F46' }}>📍 Find Us</div>
+                <h2 style={{ fontFamily:'Pacifico,cursive', fontSize:'clamp(28px,5vw,52px)', color:C.pink, marginBottom:12 }}>Locations & Delivery</h2>
+                <p style={{ fontSize:17, color:C.muted, fontWeight:600 }}>Come visit, or let us bring the joy to you</p>
+              </div>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))', gap:40, alignItems:'start' }}>
+
+                {/* CSS map */}
+                <div style={{ borderRadius:28, overflow:'hidden', background:'#C6F6E2', minHeight:340, position:'relative', boxShadow:'0 8px 32px rgba(0,0,0,.07)' }}
+                     role="img" aria-label="Map showing 142 Blossom Lane, Brooklyn, NY">
+                  <div style={{ display:'grid', gridTemplateColumns:'repeat(8,1fr)', gap:3, padding:4, minHeight:340 }}>
+                    {Array.from({length:64}).map((_,i) => {
+                      const row=Math.floor(i/8), col=i%8;
+                      const road = row===4 || col===4;
+                      return <div key={i} style={{ background: road ? 'rgba(255,255,255,.6)' : (i%11===0?'#A7F3D0':'#BBF7D0'), borderRadius:3 }}/>;
+                    })}
+                  </div>
+                  {/* Building blocks */}
+                  {[{t:'12%',l:'18%',w:38,h:28},{t:'22%',l:'62%',w:30,h:38},{t:'62%',l:'14%',w:34,h:26},{t:'68%',l:'66%',w:28,h:30}].map((b,i) => (
+                    <div key={i} style={{ position:'absolute',top:b.t,left:b.l,width:b.w,height:b.h,background:'rgba(5,150,105,.16)',borderRadius:4 }}/>
+                  ))}
+                  {/* Road labels */}
+                  <div style={{ position:'absolute',top:'44%',left:'52%',fontSize:10,fontWeight:700,color:'rgba(0,0,0,.3)',transform:'translateY(-50%)' }}>Blossom Ln</div>
+                  {/* Pin */}
+                  <div style={{ position:'absolute',top:'36%',left:'40%',transform:'translate(-50%,-100%)' }}>
+                    <div style={{ width:44,height:44,background:C.pink,borderRadius:'50% 50% 50% 0',transform:'rotate(-45deg)',boxShadow:'0 4px 18px rgba(244,114,182,.5)',display:'flex',alignItems:'center',justifyContent:'center' }}>
+                      <span style={{ transform:'rotate(45deg)', fontSize:20, lineHeight:1 }}>🍦</span>
+                    </div>
+                    <div style={{ width:0,height:0,borderLeft:'7px solid transparent',borderRight:'7px solid transparent',borderTop:'9px solid #F472B6',marginLeft:15 }}/>
+                  </div>
+                  {/* Address chip */}
+                  <div style={{ position:'absolute',bottom:14,left:14,right:14,background:'#fff',borderRadius:14,padding:'10px 14px',fontSize:13,fontWeight:700,color:C.dark,boxShadow:'0 4px 16px rgba(0,0,0,.08)',display:'flex',alignItems:'center',gap:8 }}>
+                    <PinIcon s={14} c={C.pink}/> 142 Blossom Lane, Brooklyn, NY 11201
+                  </div>
+                </div>
+
+                {/* Info */}
+                <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
+                  <div style={{ background:'linear-gradient(135deg,#FFF0F8,#FDE8FF)', borderRadius:24, padding:28 }}>
+                    <h3 style={{ fontWeight:800, fontSize:17, marginBottom:18, display:'flex', alignItems:'center', gap:10, color:C.dark }}>
+                      <StoreIcon s={18} c={C.pink}/> Store Hours
+                    </h3>
+                    {[['Mon – Thu','11:00am – 9:00pm'],['Fri – Sat','11:00am – 10:00pm'],['Sunday','12:00pm – 9:00pm'],['Holidays','See our Instagram']].map(([d,h]) => (
+                      <div key={d} style={{ display:'flex', justifyContent:'space-between', padding:'9px 0', borderBottom:'1px solid rgba(244,114,182,.12)', fontSize:14 }}>
+                        <span style={{ color:C.muted, fontWeight:600 }}>{d}</span>
+                        <span style={{ color:C.dark, fontWeight:800 }}>{h}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div style={{ background:'linear-gradient(135deg,#ECFDF5,#D1FAE5)', borderRadius:24, padding:28 }}>
+                    <h3 style={{ fontWeight:800, fontSize:17, marginBottom:16, display:'flex', alignItems:'center', gap:10, color:C.dark }}>
+                      <TruckIcon s={18} c="#10B981"/> Local Delivery
+                    </h3>
+                    {['📍 Within 5 miles of our shop','💰 $3.99 delivery fee','🎉 Free delivery on orders over $35','⏱ Estimated 45–60 minutes','🕐 Tuesday – Sunday, 12pm – 8pm'].map(item => (
+                      <p key={item} style={{ fontSize:14, fontWeight:600, color:C.dark, marginBottom:9 }}>{item}</p>
+                    ))}
+                  </div>
+
+                  <div style={{ background:'#fff', borderRadius:20, padding:'18px 22px', boxShadow:'0 4px 16px rgba(0,0,0,.06)', display:'flex', flexDirection:'column', gap:12 }}>
+                    {[{Icon:PhoneIcon,t:'(718) 555-0192'},{Icon:MailIcon,t:'hello@sundropcreamery.com'},{Icon:PinIcon,t:'142 Blossom Lane, Brooklyn, NY 11201'}].map(({Icon,t}) => (
+                      <div key={t} style={{ display:'flex', alignItems:'flex-start', gap:10 }}>
+                        <Icon s={15} c={C.pink}/>
+                        <span style={{ fontSize:14, color:'#44403C', fontWeight:600, lineHeight:1.5 }}>{t}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ══ TESTIMONIALS ═════════════════════════════════════════════════ */}
+          <Wave topColor="#FFFBFF" bottomColor="#FFF0F8"/>
+          <section id="contact" style={{ background:'#FFF0F8', padding:'80px 24px' }}>
+            <div style={{ maxWidth:1100, margin:'0 auto' }}>
+              <div style={{ textAlign:'center', marginBottom:56 }}>
+                <div style={{ display:'inline-block', background:C.lemon, borderRadius:50, padding:'6px 18px', marginBottom:16, fontWeight:800, fontSize:13, color:'#78350F' }}>💬 Reviews</div>
+                <h2 style={{ fontFamily:'Pacifico,cursive', fontSize:'clamp(28px,5vw,52px)', color:C.pink, marginBottom:12 }}>Happy Scoops</h2>
+                <p style={{ fontSize:17, color:C.muted, fontWeight:600 }}>What our regulars are saying</p>
+              </div>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))', gap:24 }}>
+                {TESTIMONIALS.map((t,i) => (
+                  <figure key={i} className="t-card">
+                    <div style={{ display:'flex', gap:3, marginBottom:16 }}>
+                      {[...Array(t.rating)].map((_,j) => <StarIcon key={j} s={18} f={true}/>)}
+                    </div>
+                    <blockquote style={{ fontSize:15, color:'#44403C', lineHeight:1.78, fontWeight:600, marginBottom:20, fontStyle:'italic' }}>
+                      "{t.text}"
+                    </blockquote>
+                    <figcaption style={{ display:'flex', alignItems:'center', gap:10 }}>
+                      <div style={{ width:38, height:38, background:'linear-gradient(135deg,#F9A8D4,#FDE68A)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:19 }}
+                           role="img" aria-label={t.name}>
+                        {t.avatar}
+                      </div>
+                      <span style={{ fontWeight:800, fontSize:14, color:C.dark }}>{t.name}</span>
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ══ NEWSLETTER ═══════════════════════════════════════════════════ */}
+          <section style={{ background:C.pink, padding:'80px 24px', textAlign:'center' }}>
+            <div style={{ maxWidth:560, margin:'0 auto' }}>
+              <div style={{ fontSize:52, marginBottom:16 }}>💌</div>
+              <h2 style={{ fontFamily:'Pacifico,cursive', fontSize:'clamp(26px,4vw,44px)', color:'#fff', marginBottom:14, textShadow:'0 2px 10px rgba(0,0,0,.1)' }}>
+                New flavors, first.
+              </h2>
+              <p style={{ fontSize:16, color:'rgba(255,255,255,.88)', fontWeight:600, lineHeight:1.72, marginBottom:36 }}>
+                Get seasonal drops, limited editions, and the occasional free-scoop coupon. We write good emails — promise.
+              </p>
+              {nlDone ? (
+                <div style={{ background:'#fff', borderRadius:24, padding:'28px 32px', animation:'fade-up .4s ease' }}>
+                  <div style={{ fontSize:48, marginBottom:10 }}>🎉</div>
+                  <p style={{ fontWeight:800, fontSize:20, color:C.pink, margin:0 }}>You're in the scoop!</p>
+                  <p style={{ fontSize:14, color:C.muted, fontWeight:600, marginTop:8, marginBottom:0 }}>Check your inbox for a little surprise from us.</p>
+                </div>
+              ) : (
+                <form onSubmit={submitNl} noValidate style={{ display:'flex', gap:12, flexWrap:'wrap', justifyContent:'center' }}>
+                  <div style={{ flex:'1 1 260px' }}>
+                    <input type="email" placeholder="your@email.com"
+                           value={nlEmail} onChange={e => { setNlEmail(e.target.value); setNlError(''); }}
+                           aria-label="Email address for newsletter"
+                           aria-describedby={nlError ? 'nl-err' : undefined}
+                           style={{ width:'100%', padding:'14px 22px', borderRadius:50, border: nlError ? '2.5px solid #FDE68A' : '2.5px solid transparent', fontSize:15, fontWeight:600, fontFamily:"'Nunito',sans-serif", outline:'none', boxSizing:'border-box' }}/>
+                    {nlError && <p id="nl-err" role="alert" style={{ color:C.lemon, fontSize:13, fontWeight:700, marginTop:8, textAlign:'left', paddingLeft:16 }}>{nlError}</p>}
+                  </div>
+                  <button type="submit" className="btn-dark" style={{ borderRadius:50, whiteSpace:'nowrap', flexShrink:0 }}>
+                    Subscribe ✨
+                  </button>
+                </form>
+              )}
+            </div>
+          </section>
+        </main>
+
+        {/* ══ FOOTER ═══════════════════════════════════════════════════════════ */}
+        <footer style={{ background:'#1C1917', color:'#fff', padding:'60px 24px 32px' }}>
+          <div style={{ maxWidth:1200, margin:'0 auto' }}>
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))', gap:44, marginBottom:52 }}>
+
+              <div>
+                <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
+                  <span style={{ fontSize:26 }}>🍦</span>
+                  <span style={{ fontFamily:'Pacifico,cursive', fontSize:22, color:C.pink }}>Sundrop</span>
+                </div>
+                <p style={{ fontSize:14, color:'#A8A29E', lineHeight:1.78, fontWeight:600, marginBottom:20 }}>
+                  Small-batch handcrafted ice cream. Made with love in Brooklyn, NY since 2019.
+                </p>
+                <div style={{ display:'flex', gap:10 }}>
+                  {SOCIALS.map(({ label, path }) => (
+                    <button key={label} aria-label={`Visit us on ${label}`}
+                            style={{ width:40, height:40, background:'rgba(255,255,255,.07)', border:'none', borderRadius:10, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', transition:'background .2s, transform .2s' }}
+                            onMouseEnter={e => { e.currentTarget.style.background=C.pink; e.currentTarget.style.transform='translateY(-2px)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.background='rgba(255,255,255,.07)'; e.currentTarget.style.transform='translateY(0)'; }}>
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d={path}/></svg>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h3 style={{ fontWeight:800, fontSize:13, color:C.pink, marginBottom:18, textTransform:'uppercase', letterSpacing:'.08em' }}>Quick Links</h3>
+                {NAV_LINKS.map(({ label, id }) => (
+                  <button key={id} onClick={() => scrollTo(id)}
+                          style={{ display:'block', background:'none', border:'none', color:'#A8A29E', fontFamily:"'Nunito',sans-serif", fontWeight:600, fontSize:14, cursor:'pointer', marginBottom:12, padding:0, transition:'color .15s', textAlign:'left' }}
+                          onMouseEnter={e => e.target.style.color='#fff'}
+                          onMouseLeave={e => e.target.style.color='#A8A29E'}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+
+              <div>
+                <h3 style={{ fontWeight:800, fontSize:13, color:C.pink, marginBottom:18, textTransform:'uppercase', letterSpacing:'.08em' }}>Contact</h3>
+                {[{Icon:PinIcon,t:'142 Blossom Lane\nBrooklyn, NY 11201'},{Icon:PhoneIcon,t:'(718) 555-0192'},{Icon:MailIcon,t:'hello@sundropcreamery.com'}].map(({Icon,t}) => (
+                  <div key={t} style={{ display:'flex', alignItems:'flex-start', gap:10, marginBottom:14 }}>
+                    <Icon s={14} c={C.pink}/>
+                    <span style={{ fontSize:14, color:'#A8A29E', fontWeight:600, lineHeight:1.6, whiteSpace:'pre-line' }}>{t}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div>
+                <h3 style={{ fontWeight:800, fontSize:13, color:C.pink, marginBottom:18, textTransform:'uppercase', letterSpacing:'.08em' }}>Hours</h3>
+                {[['Mon – Thu','11am – 9pm'],['Fri – Sat','11am – 10pm'],['Sunday','12pm – 9pm']].map(([d,h]) => (
+                  <div key={d} style={{ display:'flex', justifyContent:'space-between', marginBottom:10, gap:8 }}>
+                    <span style={{ fontSize:13, color:'#A8A29E', fontWeight:600 }}>{d}</span>
+                    <span style={{ fontSize:13, color:'#fff', fontWeight:800 }}>{h}</span>
+                  </div>
+                ))}
+                <div style={{ background:'rgba(244,114,182,.12)', borderRadius:12, padding:'10px 14px', marginTop:16 }}>
+                  <p style={{ fontSize:12, color:'#F9A8D4', fontWeight:600, margin:0, lineHeight:1.6 }}>
+                    Holiday hours may vary — follow @sundropcreamery on Instagram.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ borderTop:'1px solid rgba(255,255,255,.07)', paddingTop:28, display:'flex', justifyContent:'space-between', flexWrap:'wrap', gap:16 }}>
+              <p style={{ fontSize:13, color:'#78716C', fontWeight:600, margin:0 }}>
+                © 2024 Sundrop Creamery LLC. Handcrafted with 🍦 in Brooklyn.
+              </p>
+              <div style={{ display:'flex', gap:24 }}>
+                {['Privacy Policy','Terms','Allergen Info'].map(l => (
+                  <button key={l} style={{ background:'none', border:'none', color:'#78716C', fontSize:13, fontWeight:600, cursor:'pointer', fontFamily:"'Nunito',sans-serif", transition:'color .15s' }}
+                          onMouseEnter={e=>e.target.style.color='#A8A29E'}
+                          onMouseLeave={e=>e.target.style.color='#78716C'}>
+                    {l}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </footer>
+
+        {/* ══ CART DRAWER ══════════════════════════════════════════════════════ */}
+        {cartOpen && (
+          <div aria-hidden="true" onClick={() => setCartOpen(false)}
+               style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.36)', zIndex:200, backdropFilter:'blur(3px)' }}/>
+        )}
+        <aside role="dialog" aria-modal="true" aria-label="Shopping cart" aria-hidden={!cartOpen}
+               style={{
+                 position:'fixed', top:0, right:0, bottom:0, width:'100%', maxWidth:440,
+                 background:'#fff', zIndex:201, display:'flex', flexDirection:'column',
+                 boxShadow: cartOpen ? '-8px 0 50px rgba(0,0,0,.14)' : 'none',
+                 transform: cartOpen ? 'translateX(0)' : 'translateX(100%)',
+                 transition:'transform .35s cubic-bezier(.32,0,.12,1)',
+               }}>
+
+          {/* Header */}
+          <div style={{ padding:'22px 24px 16px', borderBottom:'1px solid #FFF0F8', display:'flex', justifyContent:'space-between', alignItems:'center', background:'#FFF0F8', flexShrink:0 }}>
+            <h2 style={{ fontFamily:'Pacifico,cursive', fontSize:26, color:C.pink, margin:0 }}>
+              Your Cart
+              {cartCount > 0 && <span style={{ fontSize:15, color:'#A8A29E', fontFamily:"'Nunito',sans-serif", fontWeight:700, marginLeft:8 }}>({cartCount})</span>}
+            </h2>
+            <button onClick={() => setCartOpen(false)} aria-label="Close cart"
+                    style={{ background:'none', border:'none', cursor:'pointer', padding:6, borderRadius:10 }}>
+              <XIcon s={22} c={C.dark}/>
+            </button>
+          </div>
+
+          {/* Items */}
+          <div style={{ flex:1, overflowY:'auto', padding:'16px 24px' }}>
+            {cart.length === 0 ? (
+              <div style={{ textAlign:'center', paddingTop:72 }}>
+                <div style={{ fontSize:80 }}>🍦</div>
+                <p style={{ fontWeight:800, fontSize:19, color:C.dark, marginBottom:8, marginTop:16 }}>Your cart is empty</p>
+                <p style={{ color:C.muted, fontWeight:600, marginBottom:28 }}>Add some delicious scoops!</p>
+                <button className="btn-pink" onClick={() => { setCartOpen(false); scrollTo('flavors'); }}>Browse Flavors 🍦</button>
+              </div>
+            ) : cart.map(item => (
+              <div key={item.id} style={{ display:'flex', gap:14, paddingBottom:18, marginBottom:18, borderBottom:'1px solid #F9F6FF', alignItems:'center' }}>
+                <div style={{ background:item.bg, borderRadius:16, width:60, height:60, display:'flex', alignItems:'center', justifyContent:'center', fontSize:30, flexShrink:0 }}
+                     role="img" aria-label={item.name}>
+                  {item.emoji}
+                </div>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <h4 style={{ fontWeight:800, fontSize:15, color:C.dark, margin:'0 0 4px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{item.name}</h4>
+                  <p style={{ color:C.muted, fontSize:13, fontWeight:600, margin:0 }}>
+                    ${item.price.toFixed(2)} × {item.qty} = <strong style={{ color:C.pink }}>${(item.price * item.qty).toFixed(2)}</strong>
+                  </p>
+                </div>
+                <div style={{ display:'flex', alignItems:'center', gap:6, flexShrink:0 }}>
+                  <button onClick={() => updateQty(item.id, -1)} aria-label={`Decrease ${item.name} quantity`}
+                          style={{ background:'#FFF0F8', border:'none', borderRadius:'50%', width:30, height:30, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', transition:'background .15s' }}
+                          onMouseEnter={e=>e.currentTarget.style.background='#F9A8D4'}
+                          onMouseLeave={e=>e.currentTarget.style.background='#FFF0F8'}>
+                    <MinusIcon s={14} c={C.pink}/>
+                  </button>
+                  <span style={{ fontWeight:900, fontSize:15, minWidth:22, textAlign:'center' }}>{item.qty}</span>
+                  <button onClick={() => updateQty(item.id, 1)} aria-label={`Increase ${item.name} quantity`}
+                          style={{ background:'#FFF0F8', border:'none', borderRadius:'50%', width:30, height:30, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', transition:'background .15s' }}
+                          onMouseEnter={e=>e.currentTarget.style.background='#F9A8D4'}
+                          onMouseLeave={e=>e.currentTarget.style.background='#FFF0F8'}>
+                    <PlusIcon s={14} c={C.pink}/>
+                  </button>
+                  <button onClick={() => removeItem(item.id)} aria-label={`Remove ${item.name} from cart`}
+                          style={{ background:'none', border:'none', cursor:'pointer', padding:4, borderRadius:6, marginLeft:2 }}>
+                    <XIcon s={15} c="#A8A29E"/>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Footer */}
+          {cart.length > 0 && (
+            <div style={{ padding:'16px 24px 36px', borderTop:'1px solid #FFF0F8', background:'#FFF0F8', flexShrink:0 }}>
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16 }}>
+                <span style={{ fontWeight:800, fontSize:18, color:C.dark }}>Subtotal</span>
+                <span style={{ fontWeight:900, fontSize:22, color:C.pink }}>${cartSub.toFixed(2)}</span>
+              </div>
+              <button className="btn-pink" style={{ width:'100%', fontSize:17, padding:'15px', justifyContent:'center' }}
+                      onClick={() => { setCartOpen(false); setCheckoutOpen(true); }}>
+                Checkout →
+              </button>
+              <button onClick={() => setCartOpen(false)}
+                      style={{ width:'100%', background:'none', border:'none', color:C.muted, fontFamily:"'Nunito',sans-serif", fontWeight:700, fontSize:14, cursor:'pointer', marginTop:12, padding:6 }}>
+                Continue Shopping
+              </button>
+            </div>
+          )}
+        </aside>
+
+        {/* ══ CHECKOUT MODAL ════════════════════════════════════════════════════ */}
+        {checkoutOpen && (
+          <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.52)', zIndex:300, display:'flex', alignItems:'center', justifyContent:'center', padding:16, backdropFilter:'blur(4px)' }}
+               onClick={e => { if (e.target === e.currentTarget) closeCheckout(); }}>
+            <div role="dialog" aria-modal="true" aria-label={orderPlaced ? 'Order confirmed' : 'Checkout'}
+                 style={{ background:'#fff', borderRadius:32, width:'100%', maxWidth:600, maxHeight:'92vh', overflowY:'auto', position:'relative', animation:'fade-up .3s ease' }}>
+
+              {/* Modal header */}
+              <div style={{ padding:'26px 32px 18px', borderBottom:'1px solid #FFF0F8', display:'flex', justifyContent:'space-between', alignItems:'center', position:'sticky', top:0, background:'#fff', zIndex:1, borderRadius:'32px 32px 0 0' }}>
+                <h2 style={{ fontFamily:'Pacifico,cursive', fontSize:28, color:C.pink, margin:0 }}>
+                  {orderPlaced ? '🎉 Order Confirmed!' : 'Checkout'}
+                </h2>
+                <button onClick={closeCheckout} aria-label="Close checkout"
+                        style={{ background:'none', border:'none', cursor:'pointer', padding:6, borderRadius:10 }}>
+                  <XIcon s={22} c={C.dark}/>
+                </button>
+              </div>
+
+              <div style={{ padding:'24px 32px 36px' }}>
+                {orderPlaced ? (
+                  /* ── SUCCESS STATE ── */
+                  <div style={{ textAlign:'center', padding:'24px 0' }}>
+                    <div style={{ fontSize:96, marginBottom:20 }}>🍦✨</div>
+                    <h3 style={{ fontWeight:800, fontSize:26, color:C.dark, marginBottom:10 }}>Order {orderNum} confirmed!</h3>
+                    <p style={{ fontSize:16, color:C.muted, fontWeight:600, lineHeight:1.78, maxWidth:400, margin:'0 auto 28px' }}>
+                      {fulfillment === 'pickup'
+                        ? '🏪 Your scoops are being lovingly prepared! Swing by 142 Blossom Lane in about 15–20 minutes.'
+                        : '🚴 Your scoops are on their way! Estimated delivery: 45–60 minutes. Get your spoon ready!'}
+                    </p>
+                    <div style={{ background:'#FFF0F8', borderRadius:20, padding:'18px 24px', marginBottom:28 }}>
+                      <p style={{ fontWeight:700, fontSize:14, color:C.muted, margin:0 }}>A confirmation will be sent to the phone number you provided.</p>
+                    </div>
+                    <button className="btn-pink" style={{ fontSize:16 }} onClick={closeCheckout}>Back to Shop 🍦</button>
+                  </div>
+                ) : (
+                  /* ── CHECKOUT FORM ── */
+                  <form onSubmit={placeOrder}>
+                    {/* Fulfillment toggle */}
+                    <div style={{ background:'#FFF0F8', borderRadius:16, padding:6, display:'flex', gap:8, marginBottom:28 }}>
+                      {[['pickup', <StoreIcon s={16}/>, 'In-Store Pickup'], ['delivery', <TruckIcon s={16}/>, 'Local Delivery']].map(([val, ico, lbl]) => (
+                        <button key={val} type="button" onClick={() => setFulfillment(val)}
+                                aria-pressed={fulfillment === val}
+                                style={{ flex:1, padding:'11px 16px', borderRadius:12, border:'none', cursor:'pointer', fontFamily:"'Nunito',sans-serif", fontWeight:800, fontSize:14, display:'flex', alignItems:'center', justifyContent:'center', gap:8, background: fulfillment===val ? C.pink : 'transparent', color: fulfillment===val ? '#fff' : C.muted, transition:'all .2s' }}>
+                          {ico} {lbl}
+                        </button>
+                      ))}
+                    </div>
+
+                    {fulfillment === 'pickup' && (
+                      <div style={{ background:'#ECFDF5', borderRadius:16, padding:'14px 18px', marginBottom:20, fontSize:14, fontWeight:700, color:'#065F46' }}>
+                        🏪 Pickup at: <strong>142 Blossom Lane, Brooklyn, NY 11201</strong> · Ready in ~15–20 min
+                      </div>
+                    )}
+
+                    {/* Form fields */}
+                    {[
+                      { key:'name',    label:'Full Name *',      placeholder:'Maya Sundrop',    type:'text' },
+                      ...(fulfillment==='delivery' ? [
+                        { key:'address', label:'Street Address *', placeholder:'123 Ice Cream Ave', type:'text' },
+                        { key:'city',    label:'City *',           placeholder:'Brooklyn',        type:'text' },
+                        { key:'zip',     label:'ZIP Code *',       placeholder:'11201',           type:'text' },
+                      ] : []),
+                      { key:'phone',   label:'Phone Number *',   placeholder:'(718) 555-0000',  type:'tel'  },
+                    ].map(({ key, label, placeholder, type }) => (
+                      <div key={key} style={{ marginBottom:16 }}>
+                        <label htmlFor={`f-${key}`} style={{ display:'block', fontWeight:800, fontSize:14, color:C.dark, marginBottom:7 }}>{label}</label>
+                        <input id={`f-${key}`} type={type} placeholder={placeholder} required
+                               value={form[key] || ''} onChange={e => setForm(p => ({ ...p, [key]: e.target.value }))}
+                               className="f-input"/>
+                      </div>
+                    ))}
+
+                    {/* Order summary */}
+                    <div style={{ background:'#FFF0F8', borderRadius:20, padding:'20px 22px', margin:'24px 0' }}>
+                      <h4 style={{ fontWeight:800, fontSize:16, marginBottom:14, color:C.dark }}>Order Summary</h4>
+                      {cart.map(item => (
+                        <div key={item.id} style={{ display:'flex', justifyContent:'space-between', marginBottom:8, fontSize:14, fontWeight:600 }}>
+                          <span style={{ color:'#44403C' }}>{item.emoji} {item.name} × {item.qty}</span>
+                          <span style={{ fontWeight:800, color:C.dark }}>${(item.price * item.qty).toFixed(2)}</span>
+                        </div>
+                      ))}
+                      <div style={{ display:'flex', justifyContent:'space-between', marginBottom:8, fontSize:14, fontWeight:600 }}>
+                        <span style={{ color:'#44403C' }}>Delivery fee</span>
+                        <span style={{ fontWeight:800, color: deliveryFee === 0 && fulfillment === 'delivery' ? '#10B981' : C.dark }}>
+                          {fulfillment === 'pickup' ? 'Free (pickup)' : deliveryFee === 0 ? 'Free 🎉' : `$${deliveryFee.toFixed(2)}`}
+                        </span>
+                      </div>
+                      <div style={{ borderTop:'1.5px solid #F9A8D4', paddingTop:12, marginTop:8, display:'flex', justifyContent:'space-between' }}>
+                        <span style={{ fontWeight:800, fontSize:16 }}>Total</span>
+                        <span style={{ fontWeight:900, fontSize:22, color:C.pink }}>${cartTotal.toFixed(2)}</span>
+                      </div>
+                    </div>
+
+                    <button type="submit" className="btn-pink" style={{ width:'100%', fontSize:17, padding:'16px', justifyContent:'center' }}>
+                      Place Order 🍦
+                    </button>
+                    <p style={{ textAlign:'center', fontSize:12, color:'#A8A29E', marginTop:12, fontWeight:600 }}>
+                      🔒 Demo only — no real payment is charged.
+                    </p>
+                  </form>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<SundropCreamery/>);
+</script>
+</body>
+</html>
